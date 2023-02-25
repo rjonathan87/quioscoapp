@@ -6,6 +6,8 @@ const QuioscoContext = createContext()
 const QuioscoProvider = ({children}) => {
   const [categorias, setCategorias] = useState([])
   const [categoriaActual, setCategoriaActual] = useState({})
+  const [producto, setProducto] = useState({})
+  const [modal, setModal] = useState(false)
   const obtenerCategorias = async () => {
     try {
       const { data } = await axios('/api/categorias')
@@ -25,13 +27,19 @@ const QuioscoProvider = ({children}) => {
     const categoria = categorias.filter( cat => cat.id === id )
     setCategoriaActual(categoria[0])
   }
+  const handleSetProducto = producto => setProducto(producto)
+  const handleChangeModal = () => setModal(!modal)
   
   return (
     <QuioscoContext.Provider
       value={{
         categorias,
         categoriaActual,
-        handleClickCategoria
+        handleClickCategoria,
+        producto,
+        handleSetProducto,
+        modal,
+        handleChangeModal
       }}
     >
       {children}
