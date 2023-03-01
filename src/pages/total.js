@@ -6,9 +6,8 @@ const Total = () => {
   const pedido = useQuiosco();
 
   const comprobarPedido = useCallback(() => {
-    console.log(pedido.length)
-    if(pedido.length === 0)
-      return
+    console.log(pedido.length === 0)
+    return pedido.length === 0 ? false : true;
   }, [pedido]);
 
   useEffect(() => {
@@ -50,7 +49,7 @@ const Total = () => {
           <input
             type="submit"
             className={`${
-              comprobarPedido()
+              comprobarPedido() === false
                 ? "bg-indigo-100"
                 : "bg-indigo-600 hover:bg-indigo-800"
             } w-full lg:w-auto px-5 py-2 rounded uppercase font-bold text-white text-center`}
