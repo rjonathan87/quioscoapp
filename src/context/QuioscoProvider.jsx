@@ -11,6 +11,8 @@ const QuioscoProvider = ({ children }) => {
   const [producto, setProducto] = useState({});
   const [modal, setModal] = useState(false);
   const [pedido, setPedido] = useState([]);
+  const [nombre, setNombre] = useState('')
+  const [total, setTotal] = useState(0)
   const router = useRouter();
   const obtenerCategorias = async () => {
     try {
@@ -26,6 +28,11 @@ const QuioscoProvider = ({ children }) => {
   useEffect(() => {
     setCategoriaActual(categorias[0]);
   }, [categorias]);
+  useEffect(() => {
+    const nuevoTotal = pedido.reduce((total, producto) => (producto.precio * producto.cantidad) + total, 0)
+    setTotal(nuevoTotal)
+  }, [pedido])
+  
 
   const handleClickCategoria = (id) => {
     const categoria = categorias.filter((cat) => cat.id === id);
@@ -63,6 +70,31 @@ const QuioscoProvider = ({ children }) => {
       setPedido(pedidoActualizado);
     }
   };
+  const colocarOrden = async e => {
+    e.preventDefault();
+
+    try {
+      const { data } = await axios.post('/api/ordenes', {
+        pedido, 
+        nombre, 
+        total, 
+        fecha: Date.now().toString()
+      })
+
+      setCategoriaActual(categorias[0]);
+      setPedido([]);
+      setNombre('')
+      setTotal(0)
+
+      toast.success('Pedido realizado correctamente');
+
+      setTimeout(() => {
+        router.push('/')
+      }, 3000);
+    } catch (error) {
+      console.log(error)
+    }
+  };
 
   return (
     <QuioscoContext.Provider
@@ -78,6 +110,10 @@ const QuioscoProvider = ({ children }) => {
         pedido,
         handleEditarCantidades,
         handleEliminarProducto,
+        nombre,
+        setNombre,
+        colocarOrden,
+        total
       }}
     >
       {children}

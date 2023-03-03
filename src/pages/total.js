@@ -1,22 +1,18 @@
 import { useCallback, useEffect } from "react";
 import Layout from "@/layout/Layout";
 import useQuiosco from "@/hooks/useQuiosco";
+import { formatearDinero } from "@/helpers";
 
 const Total = () => {
-  const { pedido } = useQuiosco();
+  const { pedido, nombre, setNombre, colocarOrden, total } = useQuiosco();
 
   const comprobarPedido = useCallback(() => {
-    return pedido.length === 0;
-  }, [pedido]);
+    return pedido.length === 0 || nombre === '' || nombre.length < 3;
+  }, [pedido, nombre]);
 
   useEffect(() => {
     comprobarPedido();
   }, [pedido, comprobarPedido]);
-
-  const colocarOrden = (e) => {
-    e.preventDefault();
-    console.log("realizar pedido");
-  };
 
   return (
     <Layout pagina="Total y Confirmar Pedido">
@@ -36,12 +32,14 @@ const Total = () => {
             id="nombre"
             className="bg-gray-200 w-full mt-3 p-2 rounded-md lg:w-1/3"
             placeholder="Nombre"
+            value={nombre}
+            onChange={ e => setNombre(e.target.value) }
           />
         </div>
         <div className="mt-10">
           <p className="text-2xl">
             Total a Pagar: {""}
-            <span className="font-bold">200</span>
+            <span className="font-bold">{ formatearDinero(total) }</span>
           </p>
         </div>
         <div className="mt-5">
