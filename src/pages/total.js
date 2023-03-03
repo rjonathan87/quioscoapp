@@ -1,13 +1,12 @@
-import useQuiosco from "@/hooks/useQuiosco";
-import Layout from "@/layout/Layout";
 import { useCallback, useEffect } from "react";
+import Layout from "@/layout/Layout";
+import useQuiosco from "@/hooks/useQuiosco";
 
 const Total = () => {
-  const pedido = useQuiosco();
+  const { pedido } = useQuiosco();
 
   const comprobarPedido = useCallback(() => {
-    console.log(pedido.length === 0)
-    return pedido.length === 0 ? false : true;
+    return pedido.length === 0;
   }, [pedido]);
 
   useEffect(() => {
@@ -49,7 +48,7 @@ const Total = () => {
           <input
             type="submit"
             className={`${
-              comprobarPedido() === false
+              comprobarPedido()
                 ? "bg-indigo-100"
                 : "bg-indigo-600 hover:bg-indigo-800"
             } w-full lg:w-auto px-5 py-2 rounded uppercase font-bold text-white text-center`}

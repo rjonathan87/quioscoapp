@@ -4,63 +4,66 @@ import { toast } from "react-toastify";
 
 const { createContext, useState, useEffect } = require("react");
 
-const QuioscoContext = createContext()
-const QuioscoProvider = ({children}) => {
-  const [categorias, setCategorias] = useState([])
-  const [categoriaActual, setCategoriaActual] = useState({})
-  const [producto, setProducto] = useState({})
-  const [modal, setModal] = useState(false)
-  const [pedido, setPedido] = useState([])
-  const router = useRouter()
+const QuioscoContext = createContext();
+const QuioscoProvider = ({ children }) => {
+  const [categorias, setCategorias] = useState([]);
+  const [categoriaActual, setCategoriaActual] = useState({});
+  const [producto, setProducto] = useState({});
+  const [modal, setModal] = useState(false);
+  const [pedido, setPedido] = useState([]);
+  const router = useRouter();
   const obtenerCategorias = async () => {
     try {
-      const { data } = await axios('/api/categorias')
-      setCategorias(data)
+      const { data } = await axios("/api/categorias");
+      setCategorias(data);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
   useEffect(() => {
-    obtenerCategorias()
-  }, [])
+    obtenerCategorias();
+  }, []);
   useEffect(() => {
-    setCategoriaActual(categorias[0])
-  }, [categorias])
-  
-  const handleClickCategoria = id => {
-    const categoria = categorias.filter( cat => cat.id === id )
-    setCategoriaActual(categoria[0])
-    router.push('/')
-  }
-  const handleSetProducto = producto => setProducto(producto)
-  const handleChangeModal = () => setModal(!modal)
-  const handleAgregarPedido = ({categoriaId, ...producto}) => {
-    if(pedido.some(productoState => productoState.id === producto.id)){
-      const pedidoActualizado = pedido.map(productoState => producto.id === producto.id 
-        ? producto 
-        : productoState
-      )
-      setPedido(pedidoActualizado)
-      toast.success('Guardado Correctamente')
-    }else{
-      setPedido([...pedido, producto])
-      toast.success('Agregado al Pedido')
+    setCategoriaActual(categorias[0]);
+  }, [categorias]);
+
+  const handleClickCategoria = (id) => {
+    const categoria = categorias.filter((cat) => cat.id === id);
+    setCategoriaActual(categoria[0]);
+    router.push("/");
+  };
+  const handleSetProducto = (producto) => setProducto(producto);
+  const handleChangeModal = () => setModal(!modal);
+
+  const handleAgregarPedido = ({ categoriaId, ...producto }) => {
+    if (pedido.some((productoState) => productoState.id === producto.id)) {
+      // Actualizar la cantidad
+      const pedidoActualizado = pedido.map((productoState) =>
+        productoState.id === producto.id ? producto : productoState
+      );
+      setPedido(pedidoActualizado);
+
+      toast.success("Guardado Correctamente");
+    } else {
+      setPedido([...pedido, producto]);
+      toast.success("Agregado al Pedido");
     }
-    setModal(false)
-  }
-  const handleEditarCantidades = id => {
-    const productoActualizar = pedido.filter( producto => producto.id === id)
-    console.log(productoActualizar)
-    //setProducto(productoActualizar[0])
-    setModal(!modal)
-  }
-  const handleEliminarProducto = id => {
-    if(confirm('Está seguro de eliminar?')){
-      const pedidoActualizado = pedido.filter( producto => producto.id !== id)
-      setPedido(pedidoActualizado)
+
+    setModal(false);
+  };
+  const handleEditarCantidades = (id) => {
+    const productoActualizar = pedido.filter((producto) => producto.id === id);
+    //console.log(productoActualizar);
+    setProducto(productoActualizar[0])
+    setModal(!modal);
+  };
+  const handleEliminarProducto = (id) => {
+    if (confirm("Está seguro de eliminar?")) {
+      const pedidoActualizado = pedido.filter((producto) => producto.id !== id);
+      setPedido(pedidoActualizado);
     }
-  }
-  
+  };
+
   return (
     <QuioscoContext.Provider
       value={{
@@ -74,16 +77,14 @@ const QuioscoProvider = ({children}) => {
         handleAgregarPedido,
         pedido,
         handleEditarCantidades,
-        handleEliminarProducto
+        handleEliminarProducto,
       }}
     >
       {children}
     </QuioscoContext.Provider>
-  )
-}
+  );
+};
 
-export {
-  QuioscoProvider
-}
+export { QuioscoProvider };
 
-export default QuioscoContext
+export default QuioscoContext;
